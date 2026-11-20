@@ -45,6 +45,8 @@
     let hint = '';
     if (res.status === 404 || low.includes('does not exist') || low.includes('could not find the table') || low.includes('pgrst205'))
       hint = "The notes table isn't set up yet. Run the SQL from README.md in Supabase → SQL Editor.";
+    else if (low.includes('permission denied'))
+      hint = "Visitors don't have permission to use the notes table yet. In Supabase → SQL Editor, run: grant select, insert on table public.notes to anon, authenticated;";
     else if (low.includes('row-level security') || low.includes('42501') || res.status === 403)
       hint = "Supabase's security rules are blocking it. Re-run the two \"create policy\" lines from README.md.";
     else if (res.status === 401 || low.includes('api key') || low.includes('apikey') || low.includes('jwt'))
