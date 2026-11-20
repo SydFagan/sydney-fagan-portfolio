@@ -1,4 +1,32 @@
-const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const OS_REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MOTION_SPEED = { full: 1, calm: .35, off: 0 };
+let MOTION = OS_REDUCED ? 'calm' : 'full';
+try { const saved = localStorage.getItem('sf-motion'); if (MOTION_SPEED[saved] !== undefined) MOTION = saved; } catch(e){}
+document.documentElement.dataset.motion = MOTION;
+function setMotion(m){
+  MOTION = m;
+  document.documentElement.dataset.motion = m;
+  try { localStorage.setItem('sf-motion', m); } catch(e){}
+  document.querySelectorAll('.motion-opts button').forEach(b=>b.setAttribute('aria-checked', b.dataset.m === m));
+  window.dispatchEvent(new CustomEvent('motionchange', {detail:m}));
+}
+// motion switch inside the palette menu
+(function(){
+  const panel = document.getElementById('themePanel');
+  if (!panel) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'motion-row';
+  wrap.innerHTML = '<div class="theme-head">Motion</div><div class="motion-opts" role="radiogroup" aria-label="Animation level"></div>';
+  const opts = wrap.querySelector('.motion-opts');
+  [['full','✨ Full'],['calm','🌙 Calm'],['off','⏸ Off']].forEach(([m,label])=>{
+    const b = document.createElement('button');
+    b.type = 'button'; b.dataset.m = m; b.textContent = label;
+    b.setAttribute('role','radio'); b.setAttribute('aria-checked', m === MOTION);
+    b.addEventListener('click', e=>{ e.stopPropagation(); setMotion(m); });
+    opts.appendChild(b);
+  });
+  panel.appendChild(wrap);
+})();
 
 
 function themeColor(name, alpha = 1){
@@ -138,8 +166,10 @@ const Side = (function(){
   // physics: push away from the mouse, spring back, gentle idle sway
   function tick(t, force){
     const R = 170;
+    const still = MOTION === 'off';
+    const mx = still ? -9999 : mouse.x, my = still ? -9999 : mouse.y;
     items.forEach(it=>{
-      const dx = it.x + it.ox - mouse.x, dy = it.y + it.oy - mouse.y;
+      const dx = it.x + it.ox - mx, dy = it.y + it.oy - my;
       const d = Math.hypot(dx, dy);
       let fx = 0, fy = 0;
       if (d < R && d > 0.1){
@@ -153,8 +183,8 @@ const Side = (function(){
       it.ox += it.vx; it.oy += it.vy;
       it.vr = (it.vr - it.rot * .03) * .92;
       it.rot += it.vr;
-      const sway = REDUCED_MOTION ? 0 : Math.sin(t/2600 + it.phase) * (it.kind==='vine' ? 2.5 : 4);
-      const spin = it.kind==='ring' && !REDUCED_MOTION ? t/180 : 0;   // rings turn very slowly
+      const sway = Math.sin(t/2600 + it.phase) * (it.kind==='vine' ? 2.5 : 4);
+      const spin = it.kind==='ring' ? t/180 : 0;   // rings turn very slowly
       if (it.kind === 'vine'){
         it.node.setAttribute('transform', `translate(${it.ox.toFixed(2)} ${it.oy.toFixed(2)}) rotate(${(it.rot*.4 + sway*.4).toFixed(2)} ${it.x} ${it.y-150})`);
       } else {
@@ -222,10 +252,25 @@ const Waves = (function(){
     ctx.restore();
   }
 
+  // the animation clock runs at the chosen motion speed
+  let clock = 0, lastTs = null, drawnStill = false;
+  const redraw = ()=>{ drawnStill = false; };
+  addEventListener('motionchange', redraw);
+  addEventListener('themechange', redraw);
+  addEventListener('resize', redraw);
+
   function draw(ts){
-    const t = ts/1000;
+    const dt = lastTs === null ? 0 : Math.min(ts - lastTs, 100);
+    lastTs = ts;
+    clock += dt * MOTION_SPEED[MOTION];
+    if (MOTION === 'off'){
+      if (drawnStill){ requestAnimationFrame(draw); return; }   // nothing moves: skip the work
+      drawnStill = true;
+    }
+    const t = clock/1000;
     ctx.clearRect(0,0,W,H);
-    const mx = mouse.x, my = mouse.y;
+    const still = MOTION === 'off';
+    const mx = still ? -9999 : mouse.x, my = still ? -9999 : mouse.y;
 
     ribbons.forEach(r=>{
       // how close is the mouse to this ribbon, and which side is it on?
@@ -264,8 +309,8 @@ const Waves = (function(){
       spiral(x0 + s.ox, y0 + s.oy, s.size, s.rot, s.css);
     });
 
-    Side.tick(ts);
-    if (!REDUCED_MOTION) requestAnimationFrame(draw);
+    Side.tick(clock);
+    requestAnimationFrame(draw);
   }
 
   addEventListener('resize', size);

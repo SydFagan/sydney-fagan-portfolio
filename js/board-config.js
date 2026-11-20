@@ -11,5 +11,8 @@ const BOARD_CONFIG = {
 
   welcomeNotes: [
     { name: 'Sydney', message: 'Welcome to my board! Leave a note, say hi, or tell me your favorite latte flavor ♡', color: 'pink' }
-  ]
+  ],
+
+  // show the reason on the page when the board can't connect (set to false once it works)
+  showErrors: true
 };

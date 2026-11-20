@@ -1,4 +1,3 @@
-
 (function(){
   const cfg = BOARD_CONFIG;
   const SHARED = Boolean(cfg.supabaseUrl && cfg.supabaseKey);
@@ -36,14 +35,49 @@
   };
   const api = cfg.supabaseUrl.replace(/\/$/,'') + '/rest/v1/notes';
 
+  /* Turn a Supabase problem into a plain-English hint */
+  async function problem(res){
+    let text = '';
+    try { text = await res.text(); } catch(e){}
+    let detail = text;
+    try { const j = JSON.parse(text); detail = j.message || j.msg || j.error_description || j.error || text; } catch(e){}
+    const low = (detail + ' ' + res.status).toLowerCase();
+    let hint = '';
+    if (res.status === 404 || low.includes('does not exist') || low.includes('could not find the table') || low.includes('pgrst205'))
+      hint = "The notes table isn't set up yet. Run the SQL from README.md in Supabase → SQL Editor.";
+    else if (low.includes('row-level security') || low.includes('42501') || res.status === 403)
+      hint = "Supabase's security rules are blocking it. Re-run the two \"create policy\" lines from README.md.";
+    else if (res.status === 401 || low.includes('api key') || low.includes('apikey') || low.includes('jwt'))
+      hint = "Supabase didn't accept the key. Copy the publishable (or anon) key again into js/board-config.js.";
+    else if (low.includes('check constraint') || low.includes('violates'))
+      hint = "The note didn't match the table's rules (name ≤ 30, note ≤ 200 characters).";
+    const err = new Error(hint || 'Supabase error');
+    err.detail = `Supabase said (${res.status}): ${detail}`.slice(0, 300);
+    return err;
+  }
+  function networkProblem(e){
+    const err = new Error("Can't reach your Supabase project. Check supabaseUrl in js/board-config.js. Free projects also pause after about a week of no use: open supabase.com and click Restore.");
+    err.detail = String(e && e.message || e);
+    return err;
+  }
+  function report(where, err){
+    console.error('[Bulletin board] ' + where + ':', err.message, err.detail || '');
+    if (cfg.showErrors === false) return '';
+    return ' ' + err.message + (err.detail ? ' (' + err.detail + ')' : '');
+  }
+
   async function fetchNotes(){
     if (SHARED){
       const sel = 'select=id,name,message,color,created_at,pinned';
-      const [pinned, recent] = await Promise.all([
-        fetch(`${api}?${sel}&pinned=eq.true&order=created_at.desc`, {headers:headers()}),
-        fetch(`${api}?${sel}&pinned=eq.false&order=created_at.desc&limit=${cfg.maxNotes}`, {headers:headers()})
-      ]);
-      if (!pinned.ok || !recent.ok) throw new Error('load failed');
+      let pinned, recent;
+      try {
+        [pinned, recent] = await Promise.all([
+          fetch(`${api}?${sel}&pinned=eq.true&order=created_at.desc`, {headers:headers()}),
+          fetch(`${api}?${sel}&pinned=eq.false&order=created_at.desc&limit=${cfg.maxNotes}`, {headers:headers()})
+        ]);
+      } catch(e){ throw networkProblem(e); }
+      if (!pinned.ok) throw await problem(pinned);
+      if (!recent.ok) throw await problem(recent);
       return [...await pinned.json(), ...await recent.json()];
     }
     try { return JSON.parse(localStorage.getItem('sf-notes') || '[]'); } catch(e){ return []; }
@@ -51,8 +85,10 @@
 
   async function saveNote(note){
     if (SHARED){
-      const res = await fetch(api, { method:'POST', headers:{...headers(), Prefer:'return=representation'}, body: JSON.stringify(note) });
-      if (!res.ok) throw new Error('save failed');
+      let res;
+      try { res = await fetch(api, { method:'POST', headers:{...headers(), Prefer:'return=representation'}, body: JSON.stringify(note) }); }
+      catch(e){ throw networkProblem(e); }
+      if (!res.ok) throw await problem(res);
       return (await res.json())[0];
     }
     const saved = { ...note, id: 'local-' + Date.now(), created_at: new Date().toISOString(), pinned:false };
@@ -104,7 +140,7 @@
         : 'Notes are saved in your browser for now. Connect a database (see README) to share them with every visitor.';
     } catch(e){
       render([]);
-      status.textContent = "Couldn't load notes right now, please try again in a bit.";
+      status.textContent = "Couldn't load notes right now." + report('loading notes', e);
     }
   }
 
@@ -131,7 +167,7 @@
       form.reset(); count.textContent = '0';
       msg.textContent = 'Pinned! Thanks for the note ♡';
     } catch(err){
-      msg.textContent = "Couldn't pin that note, please try again.";
+      msg.textContent = "Couldn't pin that note." + report('pinning a note', err);
     }
     btn.disabled = false;
   });
