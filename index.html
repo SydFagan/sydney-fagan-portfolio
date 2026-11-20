@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sydney Fagan · Web Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Quicksand:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<canvas id="waves" aria-hidden="true"></canvas>
+<!-- Flowing side decoration (stripes, flourishes, rings, stars). Drawn by js/script.js -->
+<svg class="side" id="side" aria-hidden="true"></svg>
+
+<!-- Color theme picker. -->
+<button class="theme-btn" id="themeBtn" aria-label="Change color theme" aria-expanded="false">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18c1.2 0 1.8-.9 1.8-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z" fill="currentColor"/><circle cx="7.5" cy="11" r="1.5" fill="var(--cream)"/><circle cx="10" cy="7" r="1.5" fill="var(--cream)"/><circle cx="14.5" cy="7" r="1.5" fill="var(--cream)"/><circle cx="17" cy="11" r="1.5" fill="var(--cream)"/></svg>
+</button>
+<div class="theme-panel" id="themePanel" hidden>
+  <div class="theme-head">Pick a vibe ✿</div>
+  <div class="theme-list" id="themeList"></div>
+</div>
+
+<!-- Music player -->
+<div class="player" id="player" role="region" aria-label="Music player">
+  <button class="cd" id="cdBtn" type="button" aria-label="Show or hide the music player" aria-expanded="true" title="Sydney FM ♡"><span></span></button>
+  <div class="track">
+    <div class="track-title"><span id="trackTitle">Sydney FM</span></div>
+    <small id="trackArtist"></small>
+  </div>
+  <canvas class="viz" id="viz" width="56" height="26" aria-hidden="true"></canvas>
+  <div class="ctrls">
+    <button type="button" id="prevBtn" aria-label="Previous song"><svg viewBox="0 0 24 24"><path d="M7 6v12M18 6.5v11a1 1 0 0 1-1.5.8l-8-5.5a1 1 0 0 1 0-1.6l8-5.5A1 1 0 0 1 18 6.5z"/></svg></button>
+    <button type="button" id="playBtn" class="play" aria-label="Play"></button>
+    <button type="button" id="nextBtn" aria-label="Next song"><svg viewBox="0 0 24 24"><path d="M17 6v12M6 6.5v11a1 1 0 0 0 1.5.8l8-5.5a1 1 0 0 0 0-1.6l-8-5.5A1 1 0 0 0 6 6.5z"/></svg></button>
+    <button type="button" id="listBtn" aria-label="Playlist"><svg viewBox="0 0 24 24"><path d="M4 7h11M4 12h11M4 17h7M19 5v10.5"/><circle cx="17" cy="16" r="2.3"/></svg></button>
+  </div>
+  <input class="vol" id="volume" type="range" min="0" max="1" step="0.01" value="0.6" aria-label="Volume">
+  <ul class="playlist" id="playlist" hidden></ul>
+</div>
+
+<div class="shell">
+  <nav>
+    <a class="logo" href="#home">Sydney<span>.</span></a>
+    <div class="links">
+      <a href="#home" data-page="home">Home</a>
+      <a href="#about" data-page="about">About</a>
+      <a href="#projects" data-page="projects">Projects</a>
+      <a href="#board" data-page="board">Board</a>
+      <a href="#contact" data-page="contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HOME -->
+  <section class="page" id="page-home">
+    <div class="hero">
+      <div>
+        <div class="script">hi there, I'm</div>
+        <h1>Sydney <span class="pink">Fagan</span></h1>
+        <div class="role">Web Developer ✿ IT Consultant</div>
+        <p class="lead">I build playful, one-of-a-kind websites for local businesses and clients. Bright, fun, and built to work properly.</p>
+        <div class="ctas">
+          <a class="btn" href="#projects">See my work ♡</a>
+          <a class="btn alt" href="#contact">Let's chat</a>
+        </div>
+      </div>
+      <div class="badge-wrap">
+        <svg class="orbit" viewBox="0 0 400 400" aria-hidden="true">
+          <defs><path id="circ" d="M200,200 m-185,0 a185,185 0 1,1 370,0 a185,185 0 1,1 -370,0"/></defs>
+          <text><textPath href="#circ">creative web design ✿ HTML ✿ CSS ✿ TypeScript ✿ IU Indy grad ✿ latte art ✿ </textPath></text>
+        </svg>
+        <div class="badge pat-dots"></div>
+        <div class="badge-inner">
+         
+          <img class="me" src="images/me.jpg" alt="Sydney Fagan" onerror="this.remove()">
+          <div><b>Code<br>&amp; Cute</b><small>est. Indianapolis</small></div>
+        </div>
+        <div class="sticker" style="top:6%;right:0">✦ open to work</div>
+        <div class="sticker" style="bottom:8%;left:-4%;animation-delay:-2s">☕ latte artist</div>
+      </div>
+    </div>
+
+    <div class="marquee" aria-hidden="true"><div>
+      HTML <span>✿</span> XML <span>✿</span> CSS / Sass <span>✿</span> TypeScript <span>✿</span> JavaScript <span>✿</span> Python <span>✿</span> SQL <span>✿</span> jQuery <span>✿</span> Java <span>✿</span> C++ <span>✿</span>
+      HTML <span>✿</span> XML <span>✿</span> CSS / Sass <span>✿</span> TypeScript <span>✿</span> JavaScript <span>✿</span> Python <span>✿</span> SQL <span>✿</span> jQuery <span>✿</span> Java <span>✿</span> C++ <span>✿</span>
+    </div></div>
+
+    <div class="quick">
+      <a class="card" href="#about" style="text-decoration:none;color:inherit"><div class="swatch pat-stripe"></div><div class="txt"><h3>About me</h3><p>IU Indianapolis grad, IT consultant and very proactive dreamer.</p></div></a>
+      <a class="card" href="#projects" style="text-decoration:none;color:inherit"><div class="swatch pat-floral"></div><div class="txt"><h3>Projects</h3><p>Custom sites for local businesses, each one designed from scratch.</p></div></a>
+      <a class="card" href="#contact" style="text-decoration:none;color:inherit"><div class="swatch pat-plaid"></div><div class="txt"><h3>Say hello</h3><p>Got a business that needs a site with personality? Let's talk.</p></div></a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="page" id="page-about">
+    <h2 class="page-title">About me</h2>
+    <div class="script">the girl behind the code ♡</div>
+    <div class="about-grid">
+      <div class="card">
+        <p>Hi! I'm <b>Sydney Fagan</b>, a web developer and graduate of <b>Indiana University Indianapolis</b>. My work mostly focuses on the creative, fun side of web design: I make unique sites for local businesses and clients that feel as special as the people behind them.</p>
+        <p>I currently work as an <b>IT Consultant</b>, and it's given me a deeper love for tech. It's taught me how systems fit together behind the scenes, and that makes the sites I build stronger.</p>
+        <div class="edu">
+          <div class="icon pat-stripe"></div>
+          <div><b>Indiana University Indianapolis</b><br><small>Graduate · Web Development</small></div>
+        </div>
+      </div>
+      <div class="card skills">
+        <h3>Proficient <span class="lvl" style="background:var(--choc);color:var(--cream)">★★★</span></h3>
+        <div class="chips"><span class="chip pro">HTML</span><span class="chip pro">XML</span><span class="chip pro">CSS / Sass</span><span class="chip pro">TypeScript</span><span class="chip pro">JavaScript</span></div>
+        <h3>Strong <span class="lvl" style="background:var(--pink)">★★</span></h3>
+        <div class="chips"><span class="chip good">Python</span><span class="chip good">SQL</span><span class="chip good">jQuery</span></div>
+        <h3>Learning now <span class="lvl" style="background:var(--cream)">★</span></h3>
+        <div class="chips"><span class="chip learn">Java</span><span class="chip learn">C++</span><span class="chip learn">&amp; more!</span></div>
+      </div>
+    </div>
+
+    <div class="hobbies">
+      <div class="card hobby">
+        <svg viewBox="0 0 90 90" aria-hidden="true"><circle cx="45" cy="45" r="40" fill="var(--cream)" stroke="var(--choc)" stroke-width="4"/><circle cx="45" cy="45" r="31" fill="var(--tan)"/><path d="M45 26c-7 6-10 11-10 16 0 6 4 10 10 10s10-4 10-10c0-5-3-10-10-16z" fill="var(--cream)"/><path d="M45 52v14M38 58c4 3 10 3 14 0M36 63c5 4 13 4 18 0" stroke="var(--cream)" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+        <div><h3>Latte art</h3><p>Practicing hearts, tulips and rosettas, one cup at a time.</p></div>
+      </div>
+      <div class="card hobby">
+        <svg viewBox="0 0 90 90" aria-hidden="true"><circle cx="45" cy="45" r="40" fill="var(--pink)" stroke="var(--choc)" stroke-width="4"/><path d="M8 58c10-6 20 6 37 0s27 6 37 0v20H8z" fill="var(--cream)"/><path d="M18 52c18 7 36 7 54 0-18-4-36-4-54 0z" fill="var(--rose)" stroke="var(--choc)" stroke-width="3"/><line x1="28" y1="30" x2="62" y2="62" stroke="var(--choc)" stroke-width="4" stroke-linecap="round"/><circle cx="45" cy="44" r="5" fill="var(--choc)"/></svg>
+        <div><h3>Kayaking</h3><p>Getting out on the water whenever I can. I'm a very proactive person.</p></div>
+      </div>
+    </div>
+
+    <div class="card dream pat-polka" style="color:var(--choc)">
+      <div style="background:var(--cream);border:3px solid var(--choc);border-radius:18px;padding:28px">
+        <h3 style="font-size:1.8rem">Big dreams, real steps</h3>
+        <p>I have so many dreams and goals to accomplish, and I make sure to take the steps I need to get where I want to be.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="page" id="page-projects">
+    <h2 class="page-title">Projects</h2>
+    <div class="script">sites with personality ✿</div>
+    <div class="note">✎ Placeholder projects: swap in your real client work, links and screenshots.</div>
+    <div class="proj-grid">
+      <article class="card proj"><div class="thumb pat-stripe"><div class="win"><i></i><i></i><i></i></div></div><div class="body"><h3>Neighborhood Café</h3><p>A cozy site with a menu, hours and online ordering link for a local coffee shop.</p><div class="tags"><span>HTML</span><span>Sass</span><span>JavaScript</span></div></div></article>
+      <article class="card proj"><div class="thumb pat-floral"><div class="win"><i></i><i></i><i></i></div></div><div class="body"><h3>Flower Boutique</h3><p>A playful storefront with an animated gallery and seasonal collections.</p><div class="tags"><span>TypeScript</span><span>CSS</span></div></div></article>
+      <article class="card proj"><div class="thumb pat-gingham"><div class="win"><i></i><i></i><i></i></div></div><div class="body"><h3>Salon Booking Site</h3><p>Service listings and a booking flow for a small business, backed by a simple database.</p><div class="tags"><span>jQuery</span><span>SQL</span><span>Python</span></div></div></article>
+      <article class="card proj"><div class="thumb pat-plaid"><div class="win"><i></i><i></i><i></i></div></div><div class="body"><h3>Event Planner Portfolio</h3><p>A bold, scroll-driven showcase of weddings and parties for a local planner.</p><div class="tags"><span>HTML</span><span>JavaScript</span></div></div></article>
+      <article class="card proj"><div class="thumb pat-hearts"><div class="win"><i></i><i></i><i></i></div></div><div class="body"><h3>Bakery Landing Page</h3><p>A sweet landing page with custom order forms and a product catalog in XML.</p><div class="tags"><span>XML</span><span>Sass</span></div></div></article>
+      <article class="card proj"><div class="thumb pat-spiral"><div class="win"><i></i><i></i><i></i></div></div><div class="body"><h3>This Portfolio!</h3><p>Y2K swirls, flowing wave animation and hand-built patterns, all in one page.</p><div class="tags"><span>HTML</span><span>CSS</span><span>Canvas</span></div></div></article>
+    </div>
+  </section>
+
+  <!-- BULLETIN BOARD -->
+  <section class="page" id="page-board">
+    <h2 class="page-title">Bulletin Board</h2>
+    <div class="script">leave a little note ♡</div>
+    <div class="board-wrap">
+      <div class="card note-form">
+        <h3>Pin a note</h3>
+        <form id="noteForm">
+          <label>Name <small>(optional)</small><input name="name" maxlength="30" placeholder="Anonymous cutie"></label>
+          <label>Your note<textarea name="message" maxlength="200" required placeholder="Say hi, leave a compliment, share a latte art tip..."></textarea></label>
+          <div class="counter"><span id="noteCount">0</span>/200</div>
+          <div class="color-pick" id="colorPick" role="radiogroup" aria-label="Note color"></div>
+          <button class="btn" type="submit">Pin it! 📌</button>
+          <div class="form-msg" id="noteMsg" role="status"></div>
+        </form>
+      </div>
+      <div class="board" id="noteBoard" aria-live="polite">
+        <div class="board-loading">Loading notes…</div>
+      </div>
+    </div>
+    <p class="board-status" id="boardStatus"></p>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="page" id="page-contact">
+    <h2 class="page-title">Contact</h2>
+    <div class="script">let's make something cute together ♡</div>
+    <div class="contact-grid">
+      <div class="card">
+        <form id="form">
+          <label>Your name<input required name="name" placeholder="Jane Doe"></label>
+          <label>Email<input required type="email" name="email" placeholder="jane@email.com"></label>
+          <label>What do you need?
+            <select name="type"><option>A brand new website</option><option>A refresh of my site</option><option>IT consulting</option><option>Just saying hi!</option></select>
+          </label>
+          <label>Message<textarea required name="msg" placeholder="Tell me about your business..."></textarea></label>
+          <button class="btn" type="submit">Send it ✿</button>
+          <div class="sent" id="sent">Thanks! This form is a preview and isn't connected to an inbox yet, so please reach out using the details on the right.</div>
+        </form>
+      </div>
+      <div class="reach">
+        <div class="row"><div class="dot pat-stripe"></div><div>Email<small>your.email@example.com</small></div></div>
+        <div class="row"><div class="dot pat-floral"></div><div>LinkedIn<small>linkedin.com/in/your-profile</small></div></div>
+        <div class="row"><div class="dot pat-dots"></div><div>GitHub<small>github.com/your-username</small></div></div>
+        <div class="row"><div class="dot pat-plaid"></div><div>Based in<small>Indianapolis, Indiana</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>made with <span>♡</span>, swirls &amp; a lot of coffee · © Sydney Fagan</footer>
+</div>
+
+<script src="js/themes.js"></script>
+<script src="js/script.js"></script>
+<script src="js/board-config.js"></script>
+<script src="js/board.js"></script>
+<script src="js/music-config.js"></script>
+<script src="js/music.js"></script>
+</body>
+</html>

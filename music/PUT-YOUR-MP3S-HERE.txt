@@ -1,0 +1,2 @@
+Put your own .mp3 files here, then add them to the list in js/music-config.js.
+Only use music you have the rights to (your own, or royalty-free with a license that allows website use).
